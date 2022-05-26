@@ -49,6 +49,7 @@
             <button type="button" class="btn btn-success px-3" onclick="javascript:location.href='{% url 'Patient:CreateNew'%}'"><i class="fa fa-plus"></i> เพิ่มผู้ป่วย</button>
         </div>
         <div class = "col-6 text-end">
+            <button type="button" class="btn btn-success px-3" onclick="javascript:location.href='{% url 'Patient:RadioWorkbook' %}'"><i class="fa fa-file-excel"></i></button>
             <button type="button" class="btn btn-secondary px-3" onclick="javascript:location.href='{% url 'admin:index' %}'"><i class="fa fa-gear"></i></button>
             <button type="button" class="btn btn-warning px-3" onclick="javascript:location.href='{% url 'logout' %}'"><i class="fa fa-sign-out" aria-hidden="true"></i></button>
         </div>
@@ -71,13 +72,13 @@
         {% for obj in object_list %}
             <tr>
                 <th scope="row">{{ forloop.counter }}</th>
-                <td>{{ obj.date|thaidate:"D d M y" }}</td>
+                <td >{{ obj.date|thaidate:"D d M y" }}</td>
                 <td>{{ obj.get_rank_display }} {{ obj.full_name }}</td>
                 <td>{{ obj.mobile }}</td>
                 <td>{{ obj.unit }}</td>
                 <th scope="col" class = "d-none d-sm-none d-md-none d-lg-table-cell">
                   {% if not obj.document_approved %}                    
-                    <a href = "{% url 'Patient:RadioDocument' obj.id %}" target = _blank><i class="fas fa-edit text-warning"></i></a>
+                    <a href = "{% url 'Patient:updateDocument' obj.id %}" ><i class="fas fa-edit text-warning"></i></a>
                   {% endif %}
                 </th>
                 <td class = "d-none d-sm-none d-md-none d-lg-table-cell">{{ obj.data_user }}</td>

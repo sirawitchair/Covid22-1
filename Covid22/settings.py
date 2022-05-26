@@ -20,7 +20,7 @@ ALLOWED_HOSTS = ['*']
 # Application definition
 
 INSTALLED_APPS = [
-    'grappelli',
+    # 'grappelli',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
@@ -72,7 +72,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'covid22',
         'USER': 'root',
-        'PASSWORD': '',
+        'PASSWORD': '123456',
         'HOST': 'localhost',
         'PORT': '3306',
         'OPTIONS':{
@@ -80,6 +80,14 @@ DATABASES = {
         }
     }
 }
+
+# PROJECT_DIR = os.path.abspath(os.path.dirname(__file__))
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': os.path.join(PROJECT_DIR, 'yourdatabasename.db'),
+#     }
+# }
 
 
 # Password validation
@@ -102,8 +110,9 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 AUTH_USER_MODEL = 'UserData.User'
-AUTHENTICATION_BACKENDS = ['apps.UserData.AFAuthentications.SettingsBackend',
-                           'django.contrib.auth.backends.ModelBackend']
+AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend',]
+# AUTHENTICATION_BACKENDS = ['apps.UserData.AFAuthentications.SettingsBackend',
+#                            'django.contrib.auth.backends.ModelBackend']
 
 LOGIN_URL = 'login/'
 LOGIN_REDIRECT_URL = '/'

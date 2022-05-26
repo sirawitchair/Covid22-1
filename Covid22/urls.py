@@ -5,7 +5,7 @@ from apps.UserData.views import MyLoginView
 
 
 urlpatterns = [
-    path('gadmin/', include('grappelli.urls')), # grappelli URLS
+    # path('gadmin/', include('grappelli.urls')), # grappelli URLS
     path('admin/', admin.site.urls),
     path('', include('apps.Patient.urls')),
     

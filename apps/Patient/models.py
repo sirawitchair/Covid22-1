@@ -1,3 +1,4 @@
+from cProfile import label
 from datetime import date
 import datetime
 
@@ -33,6 +34,7 @@ class Patient(models.Model):
     atk_date  = models.DateField(verbose_name = 'วันตรวจ ATK', blank = True, null = True,)
     rt_pcr  = models.DateField(verbose_name = 'วันตรวจ RT PCR', blank = True, null = True,)
     rt_pcr_place  = models.CharField(verbose_name = 'สถานที่ตรวจ RT PCR', max_length = 50, blank = True, null = True,)
+    atk_place  = models.CharField(verbose_name = 'สถานที่ตรวจ ATK', max_length = 50, blank = True, null = True,)
     status = models.IntegerField(verbose_name = 'สถานะผู้ป่วยปัจจุบัน', choices = CHOICE_STATUSLEVEL[0:4], default = 0, null=True, blank = True)
     treatment = models.IntegerField(verbose_name = 'การรักษาปัจจุบัน', choices = TREATMENTCHOICES, default = 0, null=True, blank = True)                                                         
     symptom = models.TextField(verbose_name = 'อาการ', null = True, blank = True)
@@ -59,4 +61,4 @@ class Patient(models.Model):
             return today.year - self.BirthDay.year
         else:
             return "-"
-
+    

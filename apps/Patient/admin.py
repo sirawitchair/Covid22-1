@@ -16,11 +16,11 @@ class PatientAdmin(admin.ModelAdmin):
 
         currect_user = request.user
         user_groups = [g.name for g in currect_user.groups.all()]
-        
-        if 'COMMANDER' in user_groups or 'DOUser' in  user_groups:            
-            pass
-        elif 'UnitAdmin' in user_groups:            
-            qs = Patient.objects.filter(current_unit = currect_user.unit)
+        qs = Patient.objects.all()
+        # if 'COMMANDER' in user_groups or 'DOUser' in  user_groups:            
+        #     pass
+        # elif 'UnitAdmin' in user_groups:            
+        #     qs = Patient.objects.filter(unit = currect_user.unit)
         # else:            
         #     qs = Patient.objects.filter(data_user = currect_user)
         # elif 'MedicalUser' in user_groups:
