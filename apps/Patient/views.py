@@ -12,6 +12,7 @@ from django.core.exceptions import PermissionDenied
 from django.http import HttpResponse,HttpResponseForbidden
 from django.conf import settings
 from django.shortcuts import get_object_or_404,render, redirect
+from django.contrib.auth.decorators import login_required
 
 from docx import Document
 from docx.oxml import OxmlElement
@@ -26,6 +27,11 @@ from .forms import PatientForm
 
 from apps.modules.utils import thai_date
 
+# class TestCreate(CreateView):
+#     model = Patient
+#     fields = ['rank','full_name','gender',]
+#     template_name = "Patient/test_create.html"
+#     success_url = "/"
 
 class PatientCreateView(LoginRequiredMixin, CreateView):
     model = Patient
@@ -59,22 +65,34 @@ class PatientListView(LoginRequiredMixin, ListView):
     def get_queryset(self) :
         currect_user = self.request.user
         user_groups = [g.name for g in currect_user.groups.all()]
-        qs = Patient.objects.all()
-        # if 'DCAUser' in user_groups or 'DOUser' in  user_groups:            
-        #     qs = Patient.objects.all()
-        # elif 'MedicalUser' in user_groups:
-        #     qs = Patient.objects.filter(document_approved = True)
-        # elif 'UnitAdmin' in user_groups:            
-        #     qs = Patient.objects.filter(unit = currect_user.unit)
-        # else:            
-        #     qs = Patient.objects.filter(data_user = currect_user)
-
+        # qs = Patient.objects.all()
+        if 'DCAUser' in user_groups or 'DOUser' in  user_groups:            
+            qs = Patient.objects.all()
+        elif 'MedicalUser' in user_groups:
+            qs = Patient.objects.filter(document_approved = True)
+        elif 'UnitAdmin' in user_groups:            
+            qs = Patient.objects.filter(unit = currect_user.unit)
+        else:            
+            qs = Patient.objects.filter(data_user = currect_user)
         qs = qs.order_by('-date')
         return qs
-    
+
+def currect_user(request):
+    user=request.user
+    user_groups = [g.name for g in user.groups.all()]
+    if 'DCAUser' in user_groups or 'DOUser' in  user_groups:
+        qs= Patient.objects.all()
+    elif 'MedicalUser' in user_groups:
+        qs = Patient.objects.filter(document_approved = True)
+    elif 'UnitAdmin' in user_groups:            
+        qs = Patient.objects.filter(unit = user.unit)
+    else:            
+        qs = Patient.objects.filter(data_user = user)
+    return qs
+
 def RadioWorkbook(request):
-    xls_unit= Patient.objects.all()
-    font=Font(name='TH SarabunPSK',size=18)
+    xls_unit= currect_user(request)
+    # font=Font(name='TH SarabunPSK',size=18)
     testxls =  os.path.join(settings.BASE_DIR,'apps/Patient/templates/Patient/documents/radioexcel.xlsx')
     workbook = load_workbook(filename=testxls)
     xls_title= f"Data.xlsx"
@@ -83,7 +101,7 @@ def RadioWorkbook(request):
     sheet = workbook[sheets[sheet_number]]
     
     for row_num , person in enumerate(xls_unit,2):
-        print(person)
+        # print(person)
         sheet[f"A{row_num}"] = row_num-1
         sheet[f"B{row_num}"] = str(person.date)
         sheet[f"C{row_num}"] = person.full_name
@@ -202,18 +220,29 @@ def RadioDocument(request, patient_id):
     response['Content-Length'] = length
     return response
 
+# @login_required
 def updateDocument(request,patient_id):
-    
+    user = request.user
+    user_groups = [g.name for g in user.groups.all()]
     patient_update = Patient.objects.get(id=patient_id)
-    if patient_update.document_approved:
+    if 'DCAUser' in user_groups or 'DOUser' in  user_groups:
+        patient_update = Patient.objects.get(id=patient_id)
+    elif 'UnitAdmin' in user_groups :
+        if user.unit == patient_update.unit:
+            patient_update = Patient.objects.filter(unit = user.unit).get(id=patient_id)
+        else:
+            return HttpResponseForbidden()
+    elif patient_update.document_approved:
         return HttpResponseForbidden()
-    if patient_update.data_user!=request.user:
+    elif patient_update.data_user==request.user:
+         patient_update = Patient.objects.get(id=patient_id)
+    else:
         return HttpResponseForbidden()
-    form=PatientForm(instance=patient_update)
     if request.method == 'POST':
         form=PatientForm(request.POST,instance=patient_update)
         if form.is_valid():
             form.save()
             return redirect('/')
+    form=PatientForm(instance=patient_update)
     context = {"form" : form , "title" : "แก้ไขข้อมูล"}
     return render(request, 'Patient/patient_create_view.html', context)

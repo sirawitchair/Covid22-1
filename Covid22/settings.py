@@ -114,7 +114,7 @@ AUTHENTICATION_BACKENDS = ['django.contrib.auth.backends.ModelBackend',]
 # AUTHENTICATION_BACKENDS = ['apps.UserData.AFAuthentications.SettingsBackend',
 #                            'django.contrib.auth.backends.ModelBackend']
 
-LOGIN_URL = 'login/'
+LOGIN_URL = '/login' 
 LOGIN_REDIRECT_URL = '/'
 LOGOUT_REDIRECT_URL = '/login'
 
