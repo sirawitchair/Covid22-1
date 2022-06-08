@@ -18,5 +18,6 @@ class UserAdmin(admin.ModelAdmin):
     list_display = ('username', 'FullName','mobile_phone', 'office_phone','last_login')
     list_display_links = ['FullName']
     list_filter = ( 'unit',)
+    search_fields=('first_name','last_name')
     ordering = ('-last_login','unit','rank',)
     save_as = True
