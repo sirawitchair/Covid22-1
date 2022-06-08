@@ -6,9 +6,6 @@ from django.contrib.auth.models import AbstractUser, Group
 
 from .constants import RTAFUnitSection, CHOICE_Rank
 
-
-
-
 class Unit(models.Model):
 
     class Meta:
